@@ -26,4 +26,4 @@ Then open `http://localhost:8000`.
 
 ## Contact
 
-edwain.ew@gmail.com
+support@seatimetracking.com
