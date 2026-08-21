@@ -1,20 +1,25 @@
-# Sea Time Tracker — website
+# Freeboard
 
-Marketing site and legal pages for **Sea Time Tracker**, an iOS app that helps seafarers on rotation or contract work track their sea time, pay, and rotation balance. Published with GitHub Pages at [seatimetracking.com](https://seatimetracking.com).
+Umbrella website for seafarer-focused apps, published with GitHub Pages at [freeboard.boats](https://freeboard.boats). Each app gets its own path.
 
-The app itself is fully offline — no accounts, no ads, no tracking, no backend. This site exists to state that clearly and to satisfy the App Store's requirement for a public privacy policy and support page.
+## Apps
+
+| App | Path | Description |
+|---|---|---|
+| Days at Sea | [/daysatsea](https://freeboard.boats/daysatsea/) | iOS app tracking rotation, contract, and sea time. Fully offline — no accounts, no ads, no tracking. |
 
 ## Pages
 
 | Page | URL |
 |---|---|
-| Landing page | [seatimetracking.com](https://seatimetracking.com) |
-| Privacy Policy | [seatimetracking.com/privacy.html](https://seatimetracking.com/privacy.html) |
-| Support | [seatimetracking.com/support.html](https://seatimetracking.com/support.html) |
+| Umbrella landing page | [freeboard.boats](https://freeboard.boats) |
+| Days at Sea landing page | [freeboard.boats/daysatsea](https://freeboard.boats/daysatsea/) |
+| Days at Sea Privacy Policy | [freeboard.boats/daysatsea/privacy.html](https://freeboard.boats/daysatsea/privacy.html) |
+| Days at Sea Support | [freeboard.boats/daysatsea/support.html](https://freeboard.boats/daysatsea/support.html) |
 
 ## Stack
 
-Static HTML/CSS, no build step, no dependencies. Hosted on GitHub Pages with a custom domain (see `CNAME`).
+Static HTML/CSS, no build step, no dependencies. Hosted on GitHub Pages with a custom domain (see `CNAME`). New apps get a new top-level folder (e.g. `/nextapp/`) with their own `index.html`, `privacy.html`, and `support.html`, then get linked from the root landing page.
 
 ## Local preview
 

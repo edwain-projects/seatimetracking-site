@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Days at Sea — track your rotation, contract, and sea time. Built for seafarers on day-rate or flat-salary contracts. No account, no ads, nothing leaves your device.">
+<title>Days at Sea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean-deep: #042C53;
+    --ocean-mid: #185FA5;
+    --brass: #854F0B;
+    --kelp: #085041;
+    --paper: #F5F4EF;
+    --paper2: #EDECEA;
+    --card: #FFFFFF;
+    --ink: #1A1A18;
+    --ink2: #6B6A65;
+    --border: rgba(4,44,83,0.12);
+    --border-soft: rgba(4,44,83,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #161614;
+      --paper2: #1E1E1C;
+      --card: #1E1E1C;
+      --ink: #F0EFE9;
+      --ink2: #9B9A95;
+      --ocean-mid: #6FA8E0;
+      --brass: #D99A3D;
+      --kelp: #35C89B;
+      --border: rgba(240,239,233,0.14);
+      --border-soft: rgba(240,239,233,0.08);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  h1, h2, h3 { font-family: "Fraunces", Georgia, "Times New Roman", serif; font-weight: 600; text-wrap: balance; margin: 0; }
+  a { color: var(--ocean-mid); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- top bar ---- */
+  .topbar { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; max-width: 780px; margin: 0 auto; }
+  .brand { font-family: "Fraunces", serif; font-weight: 600; font-size: 1.05em; color: #F5F4EF; letter-spacing: 0.01em; }
+  .toplinks { display: flex; gap: 22px; font-size: 0.9em; }
+  .toplinks a { color: rgba(245,244,239,0.82); text-decoration: none; }
+  .toplinks a:hover { color: #fff; text-decoration: underline; }
+
+  /* ---- hero ---- */
+  .hero {
+    position: relative;
+    background: var(--ocean-deep);
+    background-image: radial-gradient(ellipse 900px 500px at 50% -10%, rgba(24,95,165,0.55), transparent 65%);
+    color: #F5F4EF;
+    padding-bottom: 64px;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 120px;
+    background: linear-gradient(180deg, transparent, rgba(133,79,11,0.16) 100%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 1; padding-top: 48px; }
+  .eyebrow {
+    font-size: 0.78em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass, #C98A3E);
+    font-weight: 600;
+  }
+  @media (prefers-color-scheme: dark) { .eyebrow { color: #E3AE5E; } }
+  .hero h1 { font-size: clamp(2.4em, 6vw, 3.6em); margin-top: 0.3em; line-height: 1.05; }
+  .hero p.lede { font-size: 1.15em; max-width: 32em; color: rgba(245,244,239,0.86); margin-top: 0.6em; }
+
+  /* rotation strip — the product's core mechanic, made visible */
+  .rotation-demo { margin-top: 42px; }
+  .rotation-demo .caption { font-size: 0.82em; color: rgba(245,244,239,0.7); margin-bottom: 10px; }
+  .strip { display: flex; gap: 4px; }
+  .day {
+    width: 15px; height: 32px; border-radius: 3px;
+    background: rgba(245,244,239,0.14);
+  }
+  .day.on { background: #C98A3E; }
+  @media (prefers-color-scheme: dark) { .day.on { background: #E3AE5E; } }
+  .strip-legend { display: flex; gap: 22px; margin-top: 10px; font-size: 0.82em; color: rgba(245,244,239,0.75); }
+  .strip-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .sw.on { background: #C98A3E; }
+  .sw.off { background: rgba(245,244,239,0.14); }
+
+  /* ---- sections ---- */
+  section { padding: 64px 0; }
+  .section-head { max-width: 34em; margin-bottom: 40px; }
+  .section-head .eyebrow { color: var(--brass); }
+  .section-head h2 { font-size: 1.8em; margin-top: 0.35em; }
+  .section-head p { color: var(--ink2); margin-top: 0.5em; }
+
+  .log { border-top: 1px solid var(--border); }
+  .entry {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    gap: 24px;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .entry h3 { font-size: 1.15em; color: var(--ocean-deep); }
+  @media (prefers-color-scheme: dark) { .entry h3 { color: #EAF1FA; } }
+  .entry p { color: var(--ink2); margin-top: 0.4em; font-size: 0.97em; }
+  @media (max-width: 620px) {
+    .entry { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  .privacy-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--kelp);
+    border-radius: 6px;
+    padding: 28px 30px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .privacy-card .mark { color: var(--kelp); font-size: 1.5em; line-height: 1; margin-top: 2px; }
+  .privacy-card h3 { font-size: 1.1em; }
+  .privacy-card p { color: var(--ink2); margin-top: 0.5em; font-size: 0.97em; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 36px 0 48px;
+    font-size: 0.9em;
+    color: var(--ink2);
+  }
+  .foot-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
+  .foot-links { display: flex; gap: 20px; }
+  .foot-links a { color: var(--ink2); text-decoration: none; }
+  .foot-links a:hover { color: var(--ocean-mid); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero h1, .hero p.lede, .rotation-demo { animation: rise 0.6s ease-out backwards; }
+    .hero p.lede { animation-delay: 0.08s; }
+    .rotation-demo { animation-delay: 0.16s; }
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="topbar">
+    <div class="brand">⚓ Days at Sea</div>
+    <nav class="toplinks">
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+  <div class="wrap hero-inner">
+    <div class="eyebrow">For seafarers on rotation</div>
+    <h1>Know your sea time,<br>to the day.</h1>
+    <p class="lede">Track your rotation, contract, and pay — built for crew on day-rate or flat-salary contracts. Set your ratio once, log as you go, and always know where your balance stands.</p>
+
+    <div class="rotation-demo">
+      <div class="caption">A 3:1 rotation, one cycle</div>
+      <div class="strip" aria-hidden="true">
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day on"></div><div class="day on"></div><div class="day on"></div>
+        <div class="day"></div><div class="day"></div><div class="day"></div>
+        <div class="day"></div><div class="day"></div><div class="day"></div>
+        <div class="day"></div>
+      </div>
+      <div class="strip-legend">
+        <span><span class="sw on"></span>21 days worked</span>
+        <span><span class="sw off"></span>7 days off</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section aria-labelledby="what-heading">
+    <div class="section-head">
+      <div class="eyebrow">The logbook</div>
+      <h2 id="what-heading">Everything a contract needs tracked</h2>
+      <p>Set it up once at the start of your contract, then log a few minutes at a time.</p>
+    </div>
+    <div class="log">
+      <div class="entry">
+        <h3>Rotation &amp; contract type</h3>
+        <p>2:1, 3:1, 2:2, 4:1, or a custom ratio — plus day-rate or flat-salary pay structure, set once and applied automatically.</p>
+      </div>
+      <div class="entry">
+        <h3>Calendar or board view</h3>
+        <p>Log worked days, travel days, and days off however you think about your rotation — flip between a calendar and a board.</p>
+      </div>
+      <div class="entry">
+        <h3>Pay &amp; travel-day rules</h3>
+        <p>Configure whether travel counts as worked time and whether it accrues days off, then watch running balances update themselves.</p>
+      </div>
+      <div class="entry">
+        <h3>Backup, anytime</h3>
+        <p>Export your full log as a JSON file whenever you want — to move phones, keep a personal record, or just sleep easy.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="privacy-heading">
+    <div class="section-head">
+      <div class="eyebrow">On board, not in the cloud</div>
+      <h2 id="privacy-heading">Your log stays yours</h2>
+    </div>
+    <div class="privacy-card">
+      <div class="mark">◆</div>
+      <div>
+        <h3>No account, no ads, no tracking</h3>
+        <p>Days at Sea makes no network requests and includes no analytics or third-party SDKs. Every entry is stored locally on your device. If you export a backup, that file is created and shared entirely by you — nothing is ever sent to us, because there's no server to send it to.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>© 2026 Days at Sea, by Freeboard</div>
+    <div class="foot-links">
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="../">Freeboard</a>
+      <a href="mailto:support@seatimetracking.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
